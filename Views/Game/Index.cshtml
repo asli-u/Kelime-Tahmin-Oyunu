@@ -1,0 +1,152 @@
+@model KelimeTahminWeb.Models.GameModel
+@{
+    ViewData["Title"] = "Kelime Tahmin Oyunu";
+}
+
+<style>
+    body {
+        background-color: #D8BFD8; 
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .oyun-kapsayici {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 95vh;
+        text-align: center;
+    }
+</style>
+
+<div class="oyun-kapsayici">
+
+<h1 style="color:#333; font-size: 48px;">Kelime Tahmin Oyunu</h1>
+
+@if (!string.IsNullOrEmpty(Model.Mesaj))
+{
+    <div class="mesaj-kutusu" style="font-weight:bold; margin-bottom:40px; padding:10px; background-color:#dff0d8; color:#3c763d; border-radius:5px; text-align:center; font-size:40px;">
+        @Model.Mesaj
+    </div>
+}
+
+@{
+    int kalanHak = 5 - Model.DenemeSayisi;
+    string canGosterimi = kalanHak > 0
+       ? string.Concat(Enumerable.Repeat("❤️ ", kalanHak))
+       : "Oyun Bitti :) "; 
+}
+
+<p style="font-size: 30px; margin-bottom: 10px;">Kalan Hak: @Html.Raw(canGosterimi)</p>
+
+
+<form asp-action="TahminYap" method="post"> 
+    <div style="display:flex; gap:5px;">
+        @for (int i = 0; i < Model.GizliKelime.Length; i++)
+        {
+            <input name="harfler" maxlength="1" required
+                   style="width:60px; height:60px; font-size:36px; text-transform:uppercase; text-align:center;" />
+        }
+    </div>
+    <br />
+    <button type="submit">Tahmin Et</button>
+</form>
+<br />
+
+@for (int i = 0; i < Model.Tahminler.Count; i++)
+    {
+        <div style="display: flex; gap: 5px; margin-bottom: 5px; justify-content:center;">
+            @for (int j = 0; j < Model.GizliKelime.Length; j++)
+            {
+                var renk = Model.Renkler[i][j];
+                string renkKod = renk switch
+                {
+                    "yesil" => "#4CAF50",
+                    "sari" => "#FFC107",
+                    "gri" => "#9E9E9E",
+                    _ => "#ddd"
+                };
+
+                <div style="width:40px; height:40px; display:flex; align-items:center; justify-content:center; background-color:@renkKod; color:white; font-weight:bold; font-size:20px; border-radius:5px;">
+                    @Model.Tahminler[i][j].ToString().ToUpper()
+                </div>
+            }
+        </div>
+    }
+
+<br />
+<div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center;">
+    <form asp-action="YeniOyun" method="post">
+        <button type="submit" style="padding: 10px 20px; font-size: 16px;">Yeni Oyun</button>
+    </form>
+
+    <form asp-action="OyundanCik" method="post">
+        <button type="submit" style="padding: 10px 20px; font-size: 16px;">Oyundan Çık</button>
+    </form>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputs = document.querySelectorAll('input[name="harfler"]');
+
+        inputs.forEach((input, idx) => {
+            input.addEventListener('input', () => {
+                if (input.value.length === 1 && idx < inputs.length - 1) {
+                    inputs[idx + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && input.value === '' && idx > 0) {
+                    inputs[idx - 1].focus();
+                }
+            });
+        });
+    });
+</script>
+
+<!-- Konfeti kütüphanesi -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mesajDiv = document.querySelector('.mesaj-kutusu');
+            if (mesajDiv && mesajDiv.textContent.includes("Tebrikler")) {
+                const duration = 2 * 1000;
+                const animationEnd = Date.now() + duration;
+                const defaults = {
+                    startVelocity: 30,
+                    spread: 360,
+                    ticks: 60,
+                    zIndex: 1000
+                };
+
+                function randomInRange(min, max) {
+                    return Math.random() * (max - min) + min;
+                }
+
+                const interval = setInterval(function () {
+                    const timeLeft = animationEnd - Date.now();
+
+                    if (timeLeft <= 0) {
+                        return clearInterval(interval);
+                    }
+
+                    const particleCount = 50 * (timeLeft / duration);
+                    confetti(Object.assign({}, defaults, {
+                        particleCount,
+                        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+                    }));
+                    confetti(Object.assign({}, defaults, {
+                        particleCount,
+                        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+                    }));
+                }, 250);
+            }
+        });
+    </script>
+}
