@@ -41,6 +41,14 @@ Bu proje ile kullanıcıların hem eğlenceli vakit geçirebileceği hem de yaz�
    ```bash
    git clone https://github.com/asli-u/Kelime-Tahmin-Oyunu.git
 
+### Gereksinimler
+
+- [.NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) veya üzeri
+- Visual Studio 2022 veya Visual Studio Code
+- İnternet bağlantısı (kelime çekimi için)
+
+Not: Projede `GameController` ana denetleyici olarak kullanıldığı için URL sonuna `/Game` eklenmesi gerekmektedir. Eğer farklı route ayarları yapmadıysanız, bu yol üzerinden oyunu başlatabilirsiniz.
+
 ---
 
 ## Lisans
