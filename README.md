@@ -39,7 +39,7 @@ Bu proje ile kullanıcıların hem eğlenceli vakit geçirebileceği hem de yaz�
 
 1. Bu repoyu kendi GitHub hesabınıza **fork**'layın veya aşağıdaki komutla klonlayın:
    ```bash
-   git clone https://github.com/asli-u/KelimeTahminOyunu.git
+   git clone https://github.com/asli-u/Kelime-Tahmin-Oyunu.git
 
 ---
 
